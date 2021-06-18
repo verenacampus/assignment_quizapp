@@ -23,6 +23,8 @@ data class Question(
     }
 }
 
+const val username = "Verena"
+
 // ein einzelnes Quiz-Game (kümmert sich um den Durchlauf durch die Fragen, Sammeln der Antworten, ...)
 data class Game(private val id: Int?, val questions: List<Question>, var finished: Boolean) {
 
@@ -53,7 +55,7 @@ data class Game(private val id: Int?, val questions: List<Question>, var finishe
         if (id == null || current == null)
             return
 
-        val response = api.answer("Verena", id, current!!.copy(choice = choice)).await()
+        val response = api.answer("$username", id, current!!.copy(choice = choice)).await()
         if (response.isSuccessful) {
             val gameFromServer = response.body() ?: throw IllegalStateException("Answering question did not return a valid game!")
             current?.choose(choice)
@@ -63,14 +65,13 @@ data class Game(private val id: Int?, val questions: List<Question>, var finishe
         }
 
     }
-
 }
 
 // für das Starten eines neuen Spiels
 object QuizRepository {
     suspend fun startGame(): Game {
 
-        val response = api.startGameFor("Verena").await()
+        val response = api.startGameFor("$username").await()
 
         if (response.isSuccessful) {
             return response.body() ?: throw IllegalStateException("Could not fetch game from server!")
