@@ -61,6 +61,9 @@ class GameFragment : Fragment() {
             activity?.findViewById(R.id.p10),
         )
 
+    private val userLabel: TextView?
+        get() = activity?.findViewById(R.id.userLabel)
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -76,6 +79,10 @@ class GameFragment : Fragment() {
         // ----------------------------------------------------------------------------------
         // UI anpassen aufgrund von ViewModel-Änderungen (LiveData)
         // ----------------------------------------------------------------------------------
+
+        viewModel.userLabel.observe(this, {label ->
+            userLabel?.text = label
+        })
 
         viewModel.question.observe(this, { question ->
             questionText?.text = question?.text

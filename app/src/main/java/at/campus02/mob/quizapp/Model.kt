@@ -1,5 +1,10 @@
 package at.campus02.mob.quizapp
 
+data class User(val firstname: String, val lastname: String, val username: String) {
+
+}
+const val username = "Verena"
+
 enum class Choice {
     A, B, C, D, NONE
 }
@@ -23,7 +28,7 @@ data class Question(
     }
 }
 
-const val username = "Verena"
+
 
 // ein einzelnes Quiz-Game (kümmert sich um den Durchlauf durch die Fragen, Sammeln der Antworten, ...)
 data class Game(private val id: Int?, val questions: List<Question>, var finished: Boolean) {
@@ -77,6 +82,22 @@ object QuizRepository {
             return response.body() ?: throw IllegalStateException("Could not fetch game from server!")
         } else {
             throw IllegalStateException("Could not fetch game from server! Http Code " + response.code())
+        }
+    }
+
+    suspend fun getUser(): User {
+
+        val response = api.getUsers("$username").await()
+
+        if (response.isSuccessful) {
+            val response =  response.body() ?: throw IllegalStateException("Could not fetch users from server!")
+
+            val user = response.filter { it.username == username }
+            // todo: was, wenn er den usernamen nicht findet?
+            return user.first()
+
+        } else {
+            throw IllegalStateException("Could not fetch users from server! Http Code " + response.code())
         }
     }
 }
