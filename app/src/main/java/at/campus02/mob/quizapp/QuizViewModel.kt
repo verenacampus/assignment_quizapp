@@ -108,6 +108,15 @@ class QuizViewModel : ViewModel() {
         )
     }
 
+    fun selectQuestion(index: Int){
+        if(finished.value == true){
+            game?.gotoIndex(index)
+            question.value = game?.current
+            updateButtonMarkers()
+            updateProgressMarkers()
+        }
+    }
+
     // </editor-fold>
 
     // <editor-fold desc="Interne Hilfsfunktionalität">
