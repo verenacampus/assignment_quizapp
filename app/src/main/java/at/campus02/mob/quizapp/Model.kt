@@ -1,5 +1,10 @@
 package at.campus02.mob.quizapp
 
+data class User(val firstname: String, val lastname: String, val username: String) {
+
+}
+const val username = "Verena"
+
 enum class Choice {
     A, B, C, D, NONE
 }
@@ -22,6 +27,8 @@ data class Question(
         choice = userChoice
     }
 }
+
+
 
 // ein einzelnes Quiz-Game (kümmert sich um den Durchlauf durch die Fragen, Sammeln der Antworten, ...)
 data class Game(private val id: Int?, val questions: List<Question>, var finished: Boolean) {
@@ -53,7 +60,7 @@ data class Game(private val id: Int?, val questions: List<Question>, var finishe
         if (id == null || current == null)
             return
 
-        val response = api.answer("Verena", id, current!!.copy(choice = choice)).await()
+        val response = api.answer("$username", id, current!!.copy(choice = choice)).await()
         if (response.isSuccessful) {
             val gameFromServer = response.body() ?: throw IllegalStateException("Answering question did not return a valid game!")
             current?.choose(choice)
@@ -63,19 +70,33 @@ data class Game(private val id: Int?, val questions: List<Question>, var finishe
         }
 
     }
-
 }
 
 // für das Starten eines neuen Spiels
 object QuizRepository {
     suspend fun startGame(): Game {
 
-        val response = api.startGameFor("Verena").await()
+        val response = api.startGameFor("$username").await()
 
         if (response.isSuccessful) {
             return response.body() ?: throw IllegalStateException("Could not fetch game from server!")
         } else {
             throw IllegalStateException("Could not fetch game from server! Http Code " + response.code())
+        }
+    }
+
+    suspend fun searchForThisUser(): User {
+
+        val response = api.searchForUsers("$username").await()
+
+        if (response.isSuccessful) {
+            val response =  response.body() ?: throw IllegalStateException("Could not fetch users from server!")
+
+            val user = response.filter { it.username == username }
+            return user.first()
+
+        } else {
+            throw IllegalStateException("Could not fetch users from server! Http Code " + response.code())
         }
     }
 }

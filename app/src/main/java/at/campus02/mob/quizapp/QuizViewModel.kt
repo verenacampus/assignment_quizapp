@@ -45,7 +45,12 @@ class QuizViewModel : ViewModel() {
 
     var guessingCountdown: MutableLiveData<Int> = MutableLiveData(0)
 
+    // Header 2: Definieren einer neuen beobachtbaren Variable userLabel (für die Anzeige im Header des View)
+    var userLabel: MutableLiveData<String?> = MutableLiveData("Name")
+
     private var game: Game? = null
+    //Header 1: Definieren einer privaten Variable user: User? analog zu game
+    private var user: User? = null
 
     // </editor-fold>
 
@@ -58,6 +63,8 @@ class QuizViewModel : ViewModel() {
     fun start() {
         error.value = null
         finished.value = false
+        if (user == null)
+            fetchUser()
         runInThread(
             execute = {
                 QuizRepository.startGame()
@@ -75,8 +82,9 @@ class QuizViewModel : ViewModel() {
                 println(exception.message)
             }
         )
-
     }
+
+
 
     // Zum Durchblättern der Fragen -> erhöht den Index und aktualisiert die aktive Frage
     fun next() {
@@ -114,6 +122,27 @@ class QuizViewModel : ViewModel() {
     // ----------------------------------------------------------------------------------
     // Interne Hilfsfunktionalität
     // ----------------------------------------------------------------------------------
+
+    //Header 3: Definieren einer privaten Hilfsfunktion fetchUser(),
+    // die runInThread verwendet, um QuizRepository.getUser() aufzurufen
+    private fun fetchUser(){
+        runInThread(
+            execute = {
+                QuizRepository.searchForThisUser()
+            },
+            //Falls erfolgreich: user den erhaltenen User zuweisen,
+            // userLabel soll den Vornamen dieses Users erhalten
+            then = {userFromServer ->
+                user = userFromServer
+                userLabel.value = user?.firstname
+            },
+            //Falls nicht erfolgreich: Setzen der error Property
+            catch = { exception ->
+                error.value = exception.message
+                println(exception.message)
+            }
+        )
+    }
 
     private fun startGuessingCountdown() {
         if (question.value?.isAnswered == true)
