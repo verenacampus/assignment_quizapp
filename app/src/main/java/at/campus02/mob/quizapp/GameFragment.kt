@@ -118,6 +118,13 @@ class GameFragment : Fragment() {
             }
         })
 
+        progressIndicators.forEachIndexed{ index, backgroundResId ->
+            progressIndicators.get(index)?.setOnClickListener{
+                viewModel.selectQuestion(index)
+            }
+
+        }
+
         viewModel.error.observe(this, { errorMessage ->
 
             if (errorMessage == null)
