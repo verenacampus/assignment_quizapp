@@ -128,7 +128,7 @@ class QuizViewModel : ViewModel() {
     private fun fetchUser(){
         runInThread(
             execute = {
-                QuizRepository.getUser()
+                QuizRepository.searchForThisUser()
             },
             //Falls erfolgreich: user den erhaltenen User zuweisen,
             // userLabel soll den Vornamen dieses Users erhalten

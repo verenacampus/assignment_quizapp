@@ -85,15 +85,14 @@ object QuizRepository {
         }
     }
 
-    suspend fun getUser(): User {
+    suspend fun searchForThisUser(): User {
 
-        val response = api.getUsers("$username").await()
+        val response = api.searchForUsers("$username").await()
 
         if (response.isSuccessful) {
             val response =  response.body() ?: throw IllegalStateException("Could not fetch users from server!")
 
             val user = response.filter { it.username == username }
-            // todo: was, wenn er den usernamen nicht findet?
             return user.first()
 
         } else {

@@ -21,9 +21,8 @@ interface RestApi {
         @Body question: Question
     ): Deferred<Response<Game>>
 
-    @GET("user/u}")
-    fun getUsers(
-        @Query("u") username: String,
+    @GET("/user/query")
+    fun searchForUsers(@Query("u") username: String,
     ):Deferred<Response<List<User>>>
 
 }
